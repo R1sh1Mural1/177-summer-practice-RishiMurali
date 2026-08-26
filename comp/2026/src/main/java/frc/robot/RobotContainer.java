@@ -56,6 +56,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
+import frc.robot.subsystems.Hopper.Hopper;
+import frc.robot.subsystems.Hopper.HopperIO;
+import frc.robot.subsystems.Hopper.HopperIOReal;
+import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.DebouncedCommand;
 
@@ -70,7 +74,8 @@ import frc.robot.util.DebouncedCommand;
  */
 public class RobotContainer {
         // Subsystems
-        
+        private final Hopper hopper;
+
         // Controller
         private final CommandXboxController controller;
         private final CommandXboxController operator;
@@ -113,14 +118,43 @@ public class RobotContainer {
                 switch (Constants.currentMode) {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
-
+                                hopper = new Hopper(new HopperIOReal(Constants.HopperConstants.Top.hopperMotorId, "rio"));
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
+                                // TODO: swap for a HopperIOSim once one exists
+                                hopper = new Hopper(new HopperIO() {
+                                        @Override
+                                        public void setRPS(double rps) {
+                                        }
+
+                                        @Override
+                                        public void stop() {
+                                        }
+
+                                        @Override
+                                        public double getVelocityRPS() {
+                                                return 0.0;
+                                        }
+                                });
                                 break;
 
                         default:
                                 // Replayed robot, disable IO implementations
+                                hopper = new Hopper(new HopperIO() {
+                                        @Override
+                                        public void setRPS(double rps) {
+                                        }
+
+                                        @Override
+                                        public void stop() {
+                                        }
+
+                                        @Override
+                                        public double getVelocityRPS() {
+                                                return 0.0;
+                                        }
+                                });
                                 break;
                 }
 
@@ -190,7 +224,12 @@ public class RobotContainer {
         private void configureButtonBindings() {
 
                 // Default command, normal field-relative drive
-                
+
+                // Hopper testing bindings (dev controller)
+                devController.a().whileTrue(new RunCommand(() -> hopper.setState(HopperState.FORWARD), hopper))
+                                .onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE), hopper));
+                devController.b().whileTrue(new RunCommand(() -> hopper.setState(HopperState.REVERSE), hopper))
+                                .onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE), hopper));
         }
 
         public void simulationButtonBindings() {
