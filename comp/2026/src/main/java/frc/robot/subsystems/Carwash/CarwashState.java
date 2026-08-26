@@ -1,23 +1,20 @@
 package frc.robot.subsystems.Carwash;
 
 /**
- * Carwash states (whiteboard). One roller; each state carries the velocity
- * (rotations per second) to run at. + = intake, - = outtake.
+ * Carwash states. Each carries the roller velocity (RPS) to run at.
  */
 public enum CarwashState {
     IDLE(0.0),
-    INTAKE_HALF(40.0),
-    INTAKE_FULL(80.0),    // Constants.CarwashConstants.targetIntakeSpeedRPS
-    OUTTAKE_HALF(-40.0),
-    OUTTAKE_FULL(-80.0);
+    INTAKE(80.0),
+    OUTTAKE(-80.0);
 
-    private final double velocityRPS;
+    private final double rps;
 
-    CarwashState(double velocityRPS) {
-        this.velocityRPS = velocityRPS;
+    CarwashState(double rps) {
+        this.rps = rps;
     }
 
-    public double getVelocityRPS() {
-        return velocityRPS;
+    public double getRPS() {
+        return rps;
     }
 }

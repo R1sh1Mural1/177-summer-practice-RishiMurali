@@ -5,37 +5,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Carwash extends SubsystemBase {
 
     private final CarwashIO io;
-
-    private CarwashState state = CarwashState.IDLE;
+    private CarwashState currentState = CarwashState.IDLE;
 
     public Carwash(CarwashIO io) {
         this.io = io;
     }
 
-    public void setState(CarwashState state) {
-        this.state = state;
-    }
-
-    public CarwashState getState() {
-        return state;
-    }
-
     @Override
     public void periodic() {
-        io.periodic();
-
-        switch (state) {
-            case IDLE:
-                io.stop();
-                break;
-            default:
-                io.setRPS(state.getVelocityRPS());
-                break;
+        switch (currentState) {
+            case IDLE -> io.stop();
+            case INTAKE -> io.setRPS(currentState.getRPS());
+            case OUTTAKE -> io.setRPS(currentState.getRPS());
         }
     }
 
-    @Override
-    public void simulationPeriodic() {
-        io.simulationPeriodic();
+    public void stop() {
+        io.stop();
+    }
+
+    public void setState(CarwashState state) {
+        this.currentState = state;
+    }
+
+    public CarwashState getState() {
+        return currentState;
     }
 }
