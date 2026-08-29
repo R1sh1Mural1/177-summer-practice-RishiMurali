@@ -21,17 +21,12 @@ public class HoodIOReal implements HoodIO {
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        if (ShooterConstants.adjustableHood.isInverted) {
-            config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        } else {
-            config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        }
-
-        if (ShooterConstants.adjustableHood.isCoast) {
-            config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        } else {
-            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        }
+        config.MotorOutput.Inverted = ShooterConstants.adjustableHood.isInverted
+                ? InvertedValue.Clockwise_Positive
+                : InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.NeutralMode = ShooterConstants.adjustableHood.isCoast
+                ? NeutralModeValue.Coast
+                : NeutralModeValue.Brake;
 
         config.Slot0.kS = ShooterConstants.adjustableHood.kAdjHoodMotorkS;
         config.Slot0.kV = ShooterConstants.adjustableHood.kAdjHoodMotorkV;

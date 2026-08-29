@@ -17,6 +17,7 @@ public class Carwash extends SubsystemBase {
             case IDLE -> io.stop();
             case INTAKE -> io.setRPS(currentState.getRPS());
             case OUTTAKE -> io.setRPS(currentState.getRPS());
+
         }
     }
 

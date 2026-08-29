@@ -32,7 +32,10 @@ public class Hopper extends SubsystemBase {
                 io.setRPS(state.getVelocityRPS());
                 break;
         }
+
+        
     }
+
 
     @Override
     public void simulationPeriodic() {
