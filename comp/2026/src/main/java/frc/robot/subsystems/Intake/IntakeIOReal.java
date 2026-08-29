@@ -24,9 +24,13 @@ public class IntakeIOReal implements IntakeIO {
 
     private TalonFXConfiguration config(boolean inverted) {
         TalonFXConfiguration config = new TalonFXConfiguration();
-        config.MotorOutput.Inverted = inverted
-                ? InvertedValue.Clockwise_Positive
-                : InvertedValue.CounterClockwise_Positive;
+
+        if (inverted) {
+            config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        } else {
+            config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        }
+
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         config.Slot0.kS = IntakeConstants.RightRollerConstants.kS;
@@ -37,6 +41,7 @@ public class IntakeIOReal implements IntakeIO {
 
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = IntakeConstants.RightRollerConstants.currentLimit;
+
         return config;
     }
 
