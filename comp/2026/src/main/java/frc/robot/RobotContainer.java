@@ -96,11 +96,11 @@ public class RobotContainer {
         private final CommandXboxController devController;
 
         // Dashboard inputs
-        private LoggedDashboardChooser<Command> autoChooser;
+       // private LoggedDashboardChooser<Command> autoChooser;
 
-        private LoggedDashboardChooser<Double> flywheelChooser;
-        private LoggedDashboardChooser<Double> hoodChooser;
-        private LoggedDashboardChooser<Double> carwashChooser;
+       // private LoggedDashboardChooser<Double> flywheelChooser;
+      //  private LoggedDashboardChooser<Double> hoodChooser;
+       // private LoggedDashboardChooser<Double> carwashChooser;
 
         private final HubUtil hub;
 
@@ -193,7 +193,7 @@ public class RobotContainer {
 
                 // Set up auto routines
                 registerCommands();
-                autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+              //  autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
@@ -218,13 +218,13 @@ public class RobotContainer {
                 // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand
                 // Depot Trench Shot"));
 
-                flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
-                hoodChooser = new LoggedDashboardChooser<>("Hood");
-                carwashChooser = new LoggedDashboardChooser<>("Carwash");
+             //   flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
+           //     hoodChooser = new LoggedDashboardChooser<>("Hood");
+                //carwashChooser = new LoggedDashboardChooser<>("Carwash");
 
-                flywheelChooser.addDefaultOption("rps", 0.0);
-                hoodChooser.addDefaultOption("rps", 0.0);
-                carwashChooser.addDefaultOption("rps", 0.0);
+               // flywheelChooser.addDefaultOption("rps", 0.0);
+               // hoodChooser.addDefaultOption("rps", 0.0);
+               // carwashChooser.addDefaultOption("rps", 0.0);
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -260,32 +260,32 @@ public class RobotContainer {
 
                 // Intake rollers
                 operator.rightTrigger()
-                                .whileTrue(new RunCommand(() -> intake.setState(IntakeState.ROLLING_IN), intake))
-                                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE), intake));
+                                .whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_IN), intake))
+                                .onFalse(Commands.runOnce(() -> intake.setState(IntakeState.IDLE), intake));
                 operator.leftTrigger()
-                                .whileTrue(new RunCommand(() -> intake.setState(IntakeState.ROLLING_OUT), intake))
-                                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE), intake));
+                                .whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_OUT), intake))
+                                .onFalse(Commands.runOnce(() -> intake.setState(IntakeState.IDLE), intake));
 
                 // Carwash
                 operator.a()
-                                .whileTrue(new RunCommand(() -> carwash.setState(CarwashState.INTAKE), carwash))
-                                .onFalse(new InstantCommand(() -> carwash.setState(CarwashState.IDLE), carwash));
+                                .whileTrue(Commands.runOnce(() -> carwash.setState(CarwashState.INTAKE), carwash))
+                                .onFalse(Commands.runOnce(() -> carwash.setState(CarwashState.IDLE), carwash));
                 operator.b()
-                                .whileTrue(new RunCommand(() -> carwash.setState(CarwashState.OUTTAKE), carwash))
-                                .onFalse(new InstantCommand(() -> carwash.setState(CarwashState.IDLE), carwash));
+                                .whileTrue(Commands.runOnce(() -> carwash.setState(CarwashState.OUTTAKE), carwash))
+                                .onFalse(Commands.runOnce(() -> carwash.setState(CarwashState.IDLE), carwash));
 
                 // Hopper
                 operator.rightBumper()
-                                .whileTrue(new RunCommand(() -> hopper.setState(HopperState.FORWARD), hopper))
-                                .onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE), hopper));
+                                .whileTrue(Commands.runOnce(() -> hopper.setState(HopperState.FORWARD), hopper))
+                                .onFalse(Commands.runOnce(() -> hopper.setState(HopperState.IDLE), hopper));
                 operator.leftBumper()
-                                .whileTrue(new RunCommand(() -> hopper.setState(HopperState.REVERSE), hopper))
-                                .onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE), hopper));
+                                .whileTrue(Commands.runOnce(() -> hopper.setState(HopperState.REVERSE), hopper))
+                                .onFalse(Commands.runOnce(() -> hopper.setState(HopperState.IDLE), hopper));
 
                 // Hood
                 operator.y()
-                                .whileTrue(new RunCommand(() -> hood.setState(HoodState.DEPLOYED), hood))
-                                .onFalse(new InstantCommand(() -> hood.setState(HoodState.IDLE), hood));
+                                .whileTrue(Commands.runOnce(() -> hood.setState(HoodState.DEPLOYED), hood))
+                                .onFalse(Commands.runOnce(() -> hood.setState(HoodState.IDLE), hood));
 
                 // ---- DRIVER (port 0): reserved for drive (not wired yet) ----
         }
@@ -324,9 +324,9 @@ public class RobotContainer {
          *
          * @return the command to run in autonomous
          */
-        public Command getAutonomousCommand() {
-                return autoChooser.get();
-        }
+    //    public Command getAutonomousCommand() {
+   //             return autoChooser.get();
+   //     }
 
         // public Pose2d getPose2D() {
         //         return drive.getPose();

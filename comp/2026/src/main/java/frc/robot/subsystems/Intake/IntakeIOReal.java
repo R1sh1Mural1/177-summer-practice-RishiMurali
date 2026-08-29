@@ -42,6 +42,9 @@ public class IntakeIOReal implements IntakeIO {
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.StatorCurrentLimit = IntakeConstants.RightRollerConstants.currentLimit;
 
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = IntakeConstants.RightRollerConstants.currentLimit;
+
         return config;
     }
 
