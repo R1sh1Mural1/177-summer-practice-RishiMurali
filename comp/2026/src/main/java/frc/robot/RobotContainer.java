@@ -1,4 +1,3 @@
-
 // Copyright 2021-2025 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
@@ -56,10 +55,22 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
+import frc.robot.subsystems.Carwash.Carwash;
+import frc.robot.subsystems.Carwash.CarwashIO;
+import frc.robot.subsystems.Carwash.CarwashIOReal;
+import frc.robot.subsystems.Carwash.CarwashState;
+import frc.robot.subsystems.Hood.Hood;
+import frc.robot.subsystems.Hood.HoodIO;
+import frc.robot.subsystems.Hood.HoodIOReal;
+import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperIOReal;
 import frc.robot.subsystems.Hopper.HopperState;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeIOReal;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.DebouncedCommand;
 
@@ -75,6 +86,9 @@ import frc.robot.util.DebouncedCommand;
 public class RobotContainer {
         // Subsystems
         private final Hopper hopper;
+        private final Carwash carwash;
+        private final Hood hood;
+        private final Intake intake;
 
         // Controller
         private final CommandXboxController controller;
@@ -119,41 +133,60 @@ public class RobotContainer {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
                                 hopper = new Hopper(new HopperIOReal(Constants.HopperConstants.Top.hopperMotorId, "rio"));
+                                carwash = new Carwash(new CarwashIOReal(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
+                                hood = new Hood(new HoodIOReal(Constants.ShooterConstants.adjustableHood.ID, "rio"));
+                                intake = new Intake(new IntakeIOReal(
+                                                Constants.IntakeConstants.RightRollerConstants.rollerMotorId,
+                                                Constants.IntakeConstants.LeftRollerConstants.rollerMotorId,
+                                                "rio"));
                                 break;
+
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
-                                // TODO: swap for a HopperIOSim once one exists
+                                // TODO: swap these inline stubs for real *IOSim files later
                                 hopper = new Hopper(new HopperIO() {
-                                        @Override
-                                        public void setRPS(double rps) {
-                                        }
-
-                                        @Override
-                                        public void stop() {
-                                        }
-
-                                        @Override
-                                        public double getVelocityRPS() {
-                                                return 0.0;
-                                        }
+                                        @Override public void setRPS(double rps) {}
+                                        @Override public void stop() {}
+                                        @Override public double getVelocityRPS() { return 0.0; }
+                                });
+                                carwash = new Carwash(new CarwashIO() {
+                                        @Override public void setRPS(double rps) {}
+                                        @Override public void stop() {}
+                                        @Override public double getVelocityRPS() { return 0.0; }
+                                });
+                                hood = new Hood(new HoodIO() {
+                                        @Override public void setPosition(double position) {}
+                                        @Override public void stop() {}
+                                        @Override public double getPosition() { return 0.0; }
+                                });
+                                intake = new Intake(new IntakeIO() {
+                                        @Override public void setRPS(double rps) {}
+                                        @Override public void stop() {}
+                                        @Override public double getVelocityRPS() { return 0.0; }
                                 });
                                 break;
 
                         default:
                                 // Replayed robot, disable IO implementations
                                 hopper = new Hopper(new HopperIO() {
-                                        @Override
-                                        public void setRPS(double rps) {
-                                        }
-
-                                        @Override
-                                        public void stop() {
-                                        }
-
-                                        @Override
-                                        public double getVelocityRPS() {
-                                                return 0.0;
-                                        }
+                                        @Override public void setRPS(double rps) {}
+                                        @Override public void stop() {}
+                                        @Override public double getVelocityRPS() { return 0.0; }
+                                });
+                                carwash = new Carwash(new CarwashIO() {
+                                        @Override public void setRPS(double rps) {}
+                                        @Override public void stop() {}
+                                        @Override public double getVelocityRPS() { return 0.0; }
+                                });
+                                hood = new Hood(new HoodIO() {
+                                        @Override public void setPosition(double position) {}
+                                        @Override public void stop() {}
+                                        @Override public double getPosition() { return 0.0; }
+                                });
+                                intake = new Intake(new IntakeIO() {
+                                        @Override public void setRPS(double rps) {}
+                                        @Override public void stop() {}
+                                        @Override public double getVelocityRPS() { return 0.0; }
                                 });
                                 break;
                 }
@@ -223,13 +256,38 @@ public class RobotContainer {
          */
         private void configureButtonBindings() {
 
-                // Default command, normal field-relative drive
+                // ---- OPERATOR (port 1): game-piece handling ----
 
-                // Hopper testing bindings (dev controller)
-                devController.a().whileTrue(new RunCommand(() -> hopper.setState(HopperState.FORWARD), hopper))
+                // Intake rollers
+                operator.rightTrigger()
+                                .whileTrue(new RunCommand(() -> intake.setState(IntakeState.ROLLING_IN), intake))
+                                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE), intake));
+                operator.leftTrigger()
+                                .whileTrue(new RunCommand(() -> intake.setState(IntakeState.ROLLING_OUT), intake))
+                                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE), intake));
+
+                // Carwash
+                operator.a()
+                                .whileTrue(new RunCommand(() -> carwash.setState(CarwashState.INTAKE), carwash))
+                                .onFalse(new InstantCommand(() -> carwash.setState(CarwashState.IDLE), carwash));
+                operator.b()
+                                .whileTrue(new RunCommand(() -> carwash.setState(CarwashState.OUTTAKE), carwash))
+                                .onFalse(new InstantCommand(() -> carwash.setState(CarwashState.IDLE), carwash));
+
+                // Hopper
+                operator.rightBumper()
+                                .whileTrue(new RunCommand(() -> hopper.setState(HopperState.FORWARD), hopper))
                                 .onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE), hopper));
-                devController.b().whileTrue(new RunCommand(() -> hopper.setState(HopperState.REVERSE), hopper))
+                operator.leftBumper()
+                                .whileTrue(new RunCommand(() -> hopper.setState(HopperState.REVERSE), hopper))
                                 .onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE), hopper));
+
+                // Hood
+                operator.y()
+                                .whileTrue(new RunCommand(() -> hood.setState(HoodState.DEPLOYED), hood))
+                                .onFalse(new InstantCommand(() -> hood.setState(HoodState.IDLE), hood));
+
+                // ---- DRIVER (port 0): reserved for drive (not wired yet) ----
         }
 
         public void simulationButtonBindings() {

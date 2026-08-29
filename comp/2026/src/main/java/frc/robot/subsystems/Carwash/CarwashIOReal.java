@@ -21,12 +21,17 @@ public class CarwashIOReal implements CarwashIO {
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        config.MotorOutput.Inverted = CarwashConstants.SharedIntake.isInverted
-                ? InvertedValue.Clockwise_Positive
-                : InvertedValue.CounterClockwise_Positive;
-        config.MotorOutput.NeutralMode = CarwashConstants.SharedIntake.isCoast
-                ? NeutralModeValue.Coast
-                : NeutralModeValue.Brake;
+        if (CarwashConstants.SharedIntake.isInverted) {
+            config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        } else {
+            config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        }
+
+        if (CarwashConstants.SharedIntake.isCoast) {
+            config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        } else {
+            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        }
 
         config.Slot0.kS = CarwashConstants.SharedIntake.kIntakeMotorkS;
         config.Slot0.kV = CarwashConstants.SharedIntake.kIntakeMotorkV;

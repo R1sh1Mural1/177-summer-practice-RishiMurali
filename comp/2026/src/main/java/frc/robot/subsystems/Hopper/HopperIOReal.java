@@ -20,12 +20,18 @@ public class HopperIOReal implements HopperIO {
         hopperConfig = hopper.getConfigurator();
 
         TalonFXConfiguration config = new TalonFXConfiguration();
-        config.MotorOutput.Inverted = HopperConstants.Top.isInverted
-                ? InvertedValue.Clockwise_Positive
-                : InvertedValue.CounterClockwise_Positive;
-        config.MotorOutput.NeutralMode = HopperConstants.Top.isCoast
-                ? NeutralModeValue.Coast
-                : NeutralModeValue.Brake;
+
+        if (HopperConstants.Top.isInverted) {
+            config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        } else {
+            config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        }
+
+        if (HopperConstants.Top.isCoast) {
+            config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        } else {
+            config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        }
 
         config.Slot0.kS = HopperConstants.Top.kHopperS;
         config.Slot0.kV = HopperConstants.Top.kHopperV;
