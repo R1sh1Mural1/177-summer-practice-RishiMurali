@@ -26,7 +26,7 @@ public class CarwashIOReal implements CarwashIO {
         } else {
             config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         }
-
+x
         if (CarwashConstants.SharedIntake.isCoast) {
             config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         } else {
